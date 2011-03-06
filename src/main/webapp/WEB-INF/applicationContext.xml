@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/jms
+		http://www.springframework.org/schema/jms/spring-jms-3-0.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<context:component-scan base-package="com.obtiva.goose">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Repository" />
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Service" />
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- jms stuff -->
+<!-- 
+	<bean id="jndiTemplate" class="org.springframework.jndi.JndiTemplate">
+		<property name="environment">
+			<props>
+				<prop key="java.naming.factory.initial">org.exolab.jms.jndi.InitialContextFactory</prop>
+				<prop key="java.naming.provider.url">tcp://localhost:3035</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="jndiQueueConnectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiTemplate" ref="jndiTemplate" />
+		<property name="jndiName" value="ConnectionFactory" />
+	</bean>
+
+	<bean id="destinationResolver"
+		class="org.springframework.jms.support.destination.JndiDestinationResolver">
+		<property name="jndiTemplate" ref="jndiTemplate" />
+		<property name="cache" value="true" />
+		<property name="fallbackToDynamicDestination" value="false" />
+	</bean>
+
+	<jms:listener-container connection-factory="topicConnectionFactory"
+		destination-resolver="destinationResolver" concurrency="5">
+		<jms:listener destination="topic1" ref="auctionListener" />
+	</jms:listener-container>
+ -->
+
+
+</beans>
