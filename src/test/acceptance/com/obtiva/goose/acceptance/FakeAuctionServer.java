@@ -1,5 +1,7 @@
 package com.obtiva.goose.acceptance;
 
+import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -14,6 +16,7 @@ import javax.jms.TextMessage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hamcrest.Matcher;
 
 import com.obtiva.goose.acceptance.util.JmsUtils;
 
@@ -42,15 +45,28 @@ public class FakeAuctionServer {
 		jmsUtils.addMessageListener(messageListener);
 	}
 	
+	public void reportPrice(int price, int increment, String bidder) {
+		jmsUtils.sendMessage(String.format("SOLVersion: 1.1; Event: PRICE; CurrentPrice: %d; Increment: %d; Bidder: %s;", price, increment, bidder));
+	}
+
 	public void announceClosed() {
 		jmsUtils.sendMessage("arbitrary text for closing");
 	}
 
 	/* assertions */
-	public void hasReceivedJoinRequestFromSniper() throws InterruptedException {
-		messageListener.receivesAMessage();
+	public void hasReceivedJoinRequestFromSniper(String sniperId) throws Exception {
+		receivesAMessageMatching(sniperId, equalTo(String.format("SOLVersion: 1.1; Command: JOIN;")));
+	}
+
+	public void hasRecievedBid(int bid, String sniperId) throws Exception {
+		receivesAMessageMatching(sniperId, equalTo(String.format("SOLVersion: 1.1; Command: BID; price: %d;", bid)));
 	}
 	
+	private void receivesAMessageMatching(String sniperId, Matcher<String> messageMatcher) throws Exception {
+		// assert correct sniper id
+		messageListener.receivesAMessage(messageMatcher);
+	}
+
 	public class SingleMessageListener implements MessageListener {
 		private final ArrayBlockingQueue<TextMessage> messages = new ArrayBlockingQueue<TextMessage>(1);
 		
@@ -64,10 +80,11 @@ public class FakeAuctionServer {
 			}
 		}
 		
-		public void receivesAMessage() throws InterruptedException {
-			assertThat("Message", messages.poll(5, TimeUnit.SECONDS), is(notNullValue()));
+		public void receivesAMessage(Matcher<? super String> messageMatcher) throws Exception {
+			TextMessage message = messages.poll(5, TimeUnit.SECONDS);
+			assertThat("Message", message, is(notNullValue()));
+			assertThat(message.getText(), messageMatcher);
 		}
 	}
-
 
 }
