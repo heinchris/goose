@@ -1,6 +1,5 @@
 package com.obtiva.goose.acceptance;
 
-import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -50,7 +49,8 @@ public class FakeAuctionServer {
 	}
 
 	public void announceClosed() {
-		jmsUtils.sendMessage("arbitrary text for closing");
+		String closingText = String.format(ApplicationRunner.STATUS_LOST, itemId);
+		jmsUtils.sendMessage(closingText);
 	}
 
 	/* assertions */
@@ -73,7 +73,7 @@ public class FakeAuctionServer {
 		@Override
 		public void onMessage(Message message) {
 			try {
-				log.info("Message received: ('" + ((TextMessage) message).getText() + "')");
+				log.info("\n>>>> " + ((TextMessage) message).getText() + "\n");
 				messages.add((TextMessage) message);
 			} catch (JMSException e) {
 				throw new RuntimeException(e);

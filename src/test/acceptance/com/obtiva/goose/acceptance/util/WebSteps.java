@@ -21,9 +21,9 @@ import cuke4duke.annotation.I18n.EN.When;
 public class WebSteps {
 	private final WebDriver d;
 
-	public WebSteps(WebDriverFacade facade) throws InvocationTargetException,
+	public WebSteps(WebDriver driver) throws InvocationTargetException,
 			InstantiationException, IllegalAccessException {
-		d = facade.getWebDriver();
+		d = driver;
 	}
 	
 	public WebDriver getWebDriver() {

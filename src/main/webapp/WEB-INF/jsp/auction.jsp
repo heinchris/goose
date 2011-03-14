@@ -32,8 +32,9 @@
 		},
 
 		_onopen : function() {
-			$('#chat').className = '';
-			auction._send(auction.itemId);
+			auction._send('SOLVersion: 1.1; Command: JOIN;');
+			//$('#chat').className = '';
+			//auction._send(auction.itemId);
 		},
 
 		_send : function(command) {

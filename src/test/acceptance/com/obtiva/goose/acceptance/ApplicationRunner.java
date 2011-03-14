@@ -7,7 +7,7 @@ package com.obtiva.goose.acceptance;
 public class ApplicationRunner {
 
 	private static final String STATUS_JOINING = "Joining auction for item %1s";
-	private static final String STATUS_LOST = "Lost auction for item %1s";
+	public static final String STATUS_LOST = "Lost auction for item %1s";
 	private static final String STATUS_BIDDING = "Bidding for item %1s";
 
 	private AuctionSniperDriver driver;

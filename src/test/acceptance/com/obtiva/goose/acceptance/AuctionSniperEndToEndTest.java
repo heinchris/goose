@@ -3,6 +3,7 @@ package com.obtiva.goose.acceptance;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.obtiva.goose.acceptance.util.WebApplication;
@@ -39,7 +40,8 @@ public class AuctionSniperEndToEndTest {
 		auction.announceClosed();
 		application.showsSniperHasLost(auction);
 	}
-	
+
+	@Ignore
 	@Test
 	public void sniperMakesHigherBidButLoses() throws Exception {
 		auction.startSellingItem();

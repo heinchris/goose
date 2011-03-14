@@ -18,7 +18,7 @@ public class AuctionsController {
 		return "<h1>Joining Lost</h1>";
 	}
 	
-	@RequestMapping(value="/")
+	@RequestMapping(value="")
 	public String index() {
 		return "index";
 	}

@@ -4,18 +4,23 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import javax.jms.Message;
+
 import org.eclipse.jetty.websocket.WebSocket;
+
+import auctionsniper.AuctionMessageTranslator;
 
 import com.obtiva.goose.acceptance.util.JmsUtils;
 
 public class AuctionWebSocket implements WebSocket {
 
-	private final Set<AuctionWebSocket> _members = new CopyOnWriteArraySet<AuctionWebSocket>();
 	Outbound _outbound;
+	private AuctionMessageTranslator listener;
 
 	public void onConnect(Outbound outbound) {
 		_outbound = outbound;
-		_members.add(this);
+		listener = new AuctionMessageTranslator(this);
+		new JmsUtils().addMessageListener(listener);
 	}
 
 	public void onMessage(byte frame, byte[] data, int offset, int length) {
@@ -24,27 +29,19 @@ public class AuctionWebSocket implements WebSocket {
 
 	public void onMessage(byte frame, String data) {
 		// send message to auction server
-		new JmsUtils().sendMessage("blah");
-		// just dummy a reply of lost auction
-		try {
-			_outbound.sendMessage(String.format("Lost auction for item %1s",
-					data));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		// for (AuctionWebSocket member : _members) {
-		// try {
-		// _outbound.sendMessage("Closed");
-		// member._outbound.sendMessage(frame, data);
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		// }
+		new JmsUtils().sendMessage(data);
 	}
 
+	public void sendMessage(String data) {
+		try {
+			_outbound.sendMessage(data);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	public void onDisconnect() {
-		_members.remove(this);
+		new JmsUtils().removeMessageListener(listener);
 	}
 
 	@Override
@@ -52,4 +49,5 @@ public class AuctionWebSocket implements WebSocket {
 			int arg4) {
 		// NoOp
 	}
+
 }

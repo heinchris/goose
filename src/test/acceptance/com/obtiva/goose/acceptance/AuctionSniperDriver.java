@@ -11,7 +11,7 @@ public class AuctionSniperDriver {
 
 	public AuctionSniperDriver(String itemId) {
 		try {
-			steps = new WebSteps(webDriverFacade);
+			steps = new WebSteps(webDriverFacade.getWebDriver());
 			steps.visit("http://localhost:8080/auctions/" + itemId);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
