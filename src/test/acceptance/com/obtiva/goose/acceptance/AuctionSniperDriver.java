@@ -6,11 +6,12 @@ import com.obtiva.goose.acceptance.util.WebSteps;
 
 public class AuctionSniperDriver {
 
+	private WebDriverFacade webDriverFacade = new WebDriverFacade();
 	private WebSteps steps;
 
 	public AuctionSniperDriver(String itemId) {
 		try {
-			steps = new WebSteps(new WebDriverFacade());
+			steps = new WebSteps(webDriverFacade);
 			steps.visit("http://localhost:8080/auctions/" + itemId);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -22,6 +23,14 @@ public class AuctionSniperDriver {
 		try {
 			steps.shouldSee(statusText);
 		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void closeBrowser() {
+		try {
+			webDriverFacade.closeBrowser();
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

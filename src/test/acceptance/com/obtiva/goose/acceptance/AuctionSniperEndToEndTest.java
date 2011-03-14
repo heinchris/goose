@@ -1,5 +1,6 @@
 package com.obtiva.goose.acceptance;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,6 +20,11 @@ public class AuctionSniperEndToEndTest {
 	@AfterClass
 	public static void stopWebServer() throws Exception {
 		WebApplication.getInstance().stop();
+	}
+	
+	@After
+	public void closeBrowser() {
+		application.closeBrowser();
 	}
 
 	@Test

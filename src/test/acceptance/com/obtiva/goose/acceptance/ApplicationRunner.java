@@ -27,4 +27,8 @@ public class ApplicationRunner {
 		driver.showsSniperStatus(String.format(STATUS_LOST, auction.getItemId()));
 	}
 
+	public void closeBrowser() {
+		driver.closeBrowser();
+	}
+
 }
