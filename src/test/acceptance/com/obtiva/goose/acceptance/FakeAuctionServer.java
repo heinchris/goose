@@ -18,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hamcrest.Matcher;
 
 import com.obtiva.goose.acceptance.util.JmsUtils;
+import com.obtiva.goose.controller.AuctionConstants;
 
 public class FakeAuctionServer {
 	
@@ -49,17 +50,16 @@ public class FakeAuctionServer {
 	}
 
 	public void announceClosed() {
-		String closingText = String.format(ApplicationRunner.STATUS_LOST, itemId);
-		jmsUtils.sendMessage(closingText);
+		jmsUtils.sendMessage(AuctionConstants.EVENT_CLOSE);
 	}
 
 	/* assertions */
 	public void hasReceivedJoinRequestFromSniper(String sniperId) throws Exception {
-		receivesAMessageMatching(sniperId, equalTo(String.format("SOLVersion: 1.1; Command: JOIN;")));
+		receivesAMessageMatching(sniperId, equalTo(String.format(AuctionConstants.COMMAND_JOIN)));
 	}
 
 	public void hasRecievedBid(int bid, String sniperId) throws Exception {
-		receivesAMessageMatching(sniperId, equalTo(String.format("SOLVersion: 1.1; Command: BID; price: %d;", bid)));
+		receivesAMessageMatching(sniperId, equalTo(String.format(AuctionConstants.COMMAND_BID, bid)));
 	}
 	
 	private void receivesAMessageMatching(String sniperId, Matcher<String> messageMatcher) throws Exception {
@@ -73,8 +73,11 @@ public class FakeAuctionServer {
 		@Override
 		public void onMessage(Message message) {
 			try {
-				log.info("\n>>>> " + ((TextMessage) message).getText() + "\n");
-				messages.add((TextMessage) message);
+				String text = ((TextMessage) message).getText();
+				if (text.contains("Command")) {
+					log.info("\n>>>> " + text + "\n");
+					messages.add((TextMessage) message);
+				}
 			} catch (JMSException e) {
 				throw new RuntimeException(e);
 			}

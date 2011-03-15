@@ -12,6 +12,7 @@ import org.eclipse.jetty.websocket.WebSocketServlet;
 public class AuctionBidsController extends WebSocketServlet {
 
 	private static final long serialVersionUID = 5481094225630379738L;
+	private static final String CONTEXT = "/bids/";
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
@@ -20,7 +21,11 @@ public class AuctionBidsController extends WebSocketServlet {
 
 	protected WebSocket doWebSocketConnect(HttpServletRequest request,
 			String protocol) {
-		return new AuctionWebSocket();
+		return new AuctionWebSocket(extractItemIdFrom(request.getRequestURI()));
+	}
+	
+	private String extractItemIdFrom(String requestURI) {
+		return requestURI.substring(CONTEXT.length());
 	}
 
 }
