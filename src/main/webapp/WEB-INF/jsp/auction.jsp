@@ -32,7 +32,7 @@
 		},
 
 		_onopen : function() {
-			auction._send('<%= com.obtiva.goose.controller.AuctionConstants.COMMAND_JOIN %>');
+			//auction._send('<%= com.obtiva.goose.controller.AuctionConstants.COMMAND_JOIN %>');
 		},
 
 		_send : function(command) {

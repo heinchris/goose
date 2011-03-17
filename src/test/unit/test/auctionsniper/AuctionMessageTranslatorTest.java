@@ -17,7 +17,7 @@ public class AuctionMessageTranslatorTest {
 
 	private final Mockery context = new Mockery();
 	private final AuctionEventListener auctionEventListener = context.mock(AuctionEventListener.class);
-	private final AuctionMessageTranslator translator = new AuctionMessageTranslator(auctionEventListener, "item-54321");
+	private final AuctionMessageTranslator translator = new AuctionMessageTranslator(auctionEventListener);
 
 	@Test
 	public void notifiesAuctionClosedWhenClosedMessageReceived() throws Exception {

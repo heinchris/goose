@@ -21,6 +21,11 @@ public class AuctionSniperDriver {
 	/* assertions */
 	public void showsSniperStatus(String statusText) {
 		try {
+			// TODO find better way to manage
+			// the test may try to assert a change in the browser
+			// before the asynch jms messages have been processed
+			// allow for some slack - 
+			Thread.sleep(500);
 			steps.shouldSee(statusText);
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);

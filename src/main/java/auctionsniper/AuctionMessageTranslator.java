@@ -14,42 +14,52 @@ import org.apache.commons.logging.LogFactory;
 
 public class AuctionMessageTranslator implements MessageListener {
 
-	private final static Log log = LogFactory.getLog(AuctionMessageTranslator.class);
-	private final String itemId;
 	private final AuctionEventListener auctionEventListener;
 
-	public AuctionMessageTranslator(AuctionEventListener auctionEventListener, String itemId) {
+	public AuctionMessageTranslator(AuctionEventListener auctionEventListener) {
 		this.auctionEventListener = auctionEventListener;
-		this.itemId = itemId;
 	}
 
 	@Override
 	public void onMessage(Message message) {
-		Map<String, String> event = unpackEventFromMessage(message);
-		String type = event.get("Event");
+		AuctionEvent event = AuctionEvent.from(message);
+		String type = event.type();
 		if ("CLOSE".equals(type)) {
 			auctionEventListener.auctionCLosed();
 		} else if ("PRICE".equals(type)) {
-			auctionEventListener.currentPrice(Integer.parseInt(event.get("CurrentPrice")), Integer.parseInt(event.get("Increment")));
-		}
-		if (isEvent(type)) {
-			log.info("\n<<<< " + getMessageData(message) + "\n");
+			auctionEventListener.currentPrice(event.price(), event.increment());
 		}
 	}
 
-	private boolean isEvent(String type) {
-		return type != null;
+}
+
+class AuctionEvent {
+	
+	private final static Log log = LogFactory.getLog(AuctionEvent.class);
+	private Map<String, String> events = new HashMap<String, String>();
+	
+	public String type() { return events.get("Event"); }
+	public int price() { return parseInt(events.get("CurrentPrice")); }
+	public int increment() { return parseInt(events.get("Increment")); }
+
+	private AuctionEvent(Message message) {
+		unpackEventFromMessage(message);
+		if (isEvent(type())) {
+			log.info("\n<<<< " + getMessageData(message) + "\n");
+		}
 	}
 	
-	private Map<String, String> unpackEventFromMessage(Message message) {
-		Map<String, String> event = new HashMap<String, String>();
+	private int parseInt(String value) {
+		return Integer.parseInt(value);
+	}
+	
+	private void unpackEventFromMessage(Message message) {
 		for (String element : getMessageData(message).split(";")) {
 			String[] pair = element.split(":");
-			event.put(pair[0].trim(), pair[1].trim());
+			events.put(pair[0].trim(), pair[1].trim());
 		}
-		return event;
 	}
-	
+
 	private String getMessageData(Message message) {
 		try {
 			return ((TextMessage)message).getText();
@@ -58,4 +68,13 @@ public class AuctionMessageTranslator implements MessageListener {
 		}
 	}
 
+	private boolean isEvent(String type) {
+		return type != null;
+	}
+
+	public static AuctionEvent from(Message message) {
+		return new AuctionEvent(message);
+	}
+
 }
+

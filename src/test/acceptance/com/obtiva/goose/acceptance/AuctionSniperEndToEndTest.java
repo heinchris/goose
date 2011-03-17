@@ -41,7 +41,6 @@ public class AuctionSniperEndToEndTest {
 		application.showsSniperHasLost(auction);
 	}
 
-	@Ignore
 	@Test
 	public void sniperMakesHigherBidButLoses() throws Exception {
 		auction.startSellingItem();

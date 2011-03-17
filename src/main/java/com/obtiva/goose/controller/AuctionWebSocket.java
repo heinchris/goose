@@ -4,12 +4,14 @@ import java.io.IOException;
 
 import org.eclipse.jetty.websocket.WebSocket;
 
-import auctionsniper.AuctionEventListener;
+import auctionsniper.Auction;
 import auctionsniper.AuctionMessageTranslator;
+import auctionsniper.AuctionSniper;
+import auctionsniper.SniperListener;
 
 import com.obtiva.goose.acceptance.util.JmsUtils;
 
-public class AuctionWebSocket implements WebSocket, AuctionEventListener {
+public class AuctionWebSocket implements WebSocket, SniperListener {
 
 	Outbound _outbound;
 	private AuctionMessageTranslator listener;
@@ -21,7 +23,21 @@ public class AuctionWebSocket implements WebSocket, AuctionEventListener {
 
 	public void onConnect(Outbound outbound) {
 		_outbound = outbound;
-		listener = new AuctionMessageTranslator(this, this.itemId);
+		
+		Auction auction = new Auction() {
+			public void bid(int amount) {
+				new JmsUtils().sendMessage(String.format(AuctionConstants.COMMAND_BID, amount));
+			}
+
+			@Override
+			public void join() {
+				new JmsUtils().sendMessage(AuctionConstants.COMMAND_JOIN);
+				
+			}
+		};
+		auction.join();
+		
+		listener = new AuctionMessageTranslator(new AuctionSniper(auction, this));
 		new JmsUtils().addMessageListener(listener);
 	}
 
@@ -52,13 +68,14 @@ public class AuctionWebSocket implements WebSocket, AuctionEventListener {
 		// NoOp
 	}
 
-	public void auctionCLosed() {
+	@Override
+	public void sniperLost() {
 		sendMessage(String.format(AuctionConstants.STATUS_LOST, this.itemId));
 	}
 
 	@Override
-	public void currentPrice(int currentPrice, int increment) {
-		// TODO Auto-generated method stub
+	public void sniperBidding() {
+		sendMessage(String.format(AuctionConstants.STATUS_BIDDING, this.itemId));
 	}
 
 }

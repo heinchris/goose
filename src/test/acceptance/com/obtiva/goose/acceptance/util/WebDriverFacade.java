@@ -12,8 +12,7 @@ public class WebDriverFacade {
 
     @SuppressWarnings("unchecked")
     private static Constructor<WebDriver> getDriverConstructor() {
-//        String driverName = System.getProperty("webdriver.impl", "org.openqa.selenium.htmlunit.HtmlUnitDriver");
-        String driverName = System.getProperty("webdriver.impl", "org.openqa.selenium.firefox.FirefoxDriver");
+    	String driverName = System.getProperty("webdriver.impl", "org.openqa.selenium.firefox.FirefoxDriver");
         try {
             return (Constructor<WebDriver>) Thread.currentThread().getContextClassLoader().loadClass(driverName).getConstructor();
         } catch (Throwable problem) {
