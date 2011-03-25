@@ -45,7 +45,6 @@
 		<servlet-name>bids</servlet-name>
 		<url-pattern>/bids/*</url-pattern>
 	</servlet-mapping>
-	
 
 	<!-- The Usual Welcome File List -->
 	<welcome-file-list>

@@ -11,9 +11,9 @@
 		auction.join('<%= request.getAttribute("auctionId") %>');
 	});
 	
-	function $F() {
-		return document.getElementById(arguments[0]).value;
-	}
+	//function $F() {
+	//	return document.getElementById(arguments[0]).value;
+	//}
 
 	function getKeyCode(ev) {
 		if (window.event)
@@ -32,8 +32,7 @@
 		},
 
 		_onopen : function() {
-			$('#chat').className = '';
-			auction._send(auction.itemId);
+			//auction._send('<%= com.obtiva.goose.controller.AuctionConstants.COMMAND_JOIN %>');
 		},
 
 		_send : function(command) {
@@ -64,45 +63,8 @@
 		border: 0px solid black;
 	}
 	
-	div#chat {
-		clear: both;
-		width: 40em;
-		height: 20ex;
-		overflow: auto;
-		background-color: #f0f0f0;
-		padding: 4px;
-		border: 1px solid black;
-	}
-	
-	div#input {
-		clear: both;
-		width: 40em;
-		padding: 4px;
-		background-color: #e0e0e0;
-		border: 1px solid black;
-		border-top: 0px
-	}
-	
-	input#phrase {
-		width: 30em;
-		background-color: #e0f0f0;
-	}
-	
-	input#username {
-		width: 14em;
-		background-color: #e0f0f0;
-	}
-	
 	div.hidden {
 		display: none;
-	}
-	
-	span.from {
-		font-weight: bold;
-	}
-	
-	span.alert {
-		font-style: italic;
 	}
 	</style>
 </head>

@@ -14,6 +14,7 @@ public class WebDriverFacade {
     private static Constructor<WebDriver> getDriverConstructor() {
 //        String driverName = System.getProperty("webdriver.impl", "org.openqa.selenium.htmlunit.HtmlUnitDriver");
     	String driverName = System.getProperty("webdriver.impl", "org.openqa.selenium.chrome.ChromeDriver");
+
         try {
             return (Constructor<WebDriver>) Thread.currentThread().getContextClassLoader().loadClass(driverName).getConstructor();
         } catch (Throwable problem) {
